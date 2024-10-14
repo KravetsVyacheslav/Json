@@ -1,8 +1,10 @@
-let students = [];
+let students = JSON.parse(localStorage.getItem("students")) || [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const studentForm = document.getElementById("studentForm");
-  const studentsTable = document.getElementById("studentsTable").querySelector("tbody");
+  const studentsTable = document
+    .getElementById("studentsTable")
+    .querySelector("tbody");
   const searchField = document.getElementById("searchField");
   const editModal = document.getElementById("editModal");
 
@@ -34,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector(".close").onclick = () => {
     editModal.style.display = "none";
   };
+
+  updateStudentsTable();
 });
 
 function validateStudentData(student) {
@@ -50,10 +54,13 @@ function addStudent(student) {
   students.push(student);
   updateStudentsTable();
   studentForm.reset();
+  localStorage.setItem("students", JSON.stringify(students));
 }
 
 function updateStudentsTable() {
-  const studentsTable = document.getElementById("studentsTable").querySelector("tbody");
+  const studentsTable = document
+    .getElementById("studentsTable")
+    .querySelector("tbody");
   studentsTable.innerHTML = "";
 
   students.forEach((student, index) => {
@@ -70,13 +77,15 @@ function updateStudentsTable() {
         <button class="delete-button">Видалити</button>
       </td>
     `;
-    
+
     studentsTable.appendChild(row);
 
-    row.querySelector(".edit-button").onclick = () => openEditModal(student, index);
+    row.querySelector(".edit-button").onclick = () =>
+      openEditModal(student, index);
     row.querySelector(".delete-button").onclick = () => {
       students.splice(index, 1);
       updateStudentsTable();
+      localStorage.setItem("students", JSON.stringify(students));
     };
   });
 }
@@ -88,13 +97,13 @@ function openEditModal(student, index) {
   document.getElementById("course").value = student.course;
   document.getElementById("faculty").value = student.faculty;
   document.getElementById("subjects").value = student.subjects.join(", ");
-  
+
   const editModal = document.getElementById("editModal");
   editModal.style.display = "block";
 
   document.getElementById("editStudentForm").onsubmit = (event) => {
     event.preventDefault();
-    
+
     const updatedStudent = {
       name: document.getElementById("name").value,
       surname: document.getElementById("surname").value,
@@ -106,17 +115,21 @@ function openEditModal(student, index) {
 
     students[index] = updatedStudent;
     updateStudentsTable();
+    localStorage.setItem("students", JSON.stringify(students));
     editModal.style.display = "none";
   };
 }
 
 function filterStudents(query) {
-  const filteredStudents = students.filter(student => 
-    student.surname.toLowerCase().includes(query) || 
-    student.course.toString().includes(query)
+  const filteredStudents = students.filter(
+    (student) =>
+      student.surname.toLowerCase().includes(query) ||
+      student.course.toString().includes(query)
   );
-  
-  const studentsTable = document.getElementById("studentsTable").querySelector("tbody");
+
+  const studentsTable = document
+    .getElementById("studentsTable")
+    .querySelector("tbody");
   studentsTable.innerHTML = "";
 
   filteredStudents.forEach((student, index) => {
@@ -133,13 +146,15 @@ function filterStudents(query) {
         <button class="delete-button">Видалити</button>
       </td>
     `;
-    
+
     studentsTable.appendChild(row);
 
-    row.querySelector(".edit-button").onclick = () => openEditModal(student, index);
+    row.querySelector(".edit-button").onclick = () =>
+      openEditModal(student, index);
     row.querySelector(".delete-button").onclick = () => {
       students.splice(index, 1);
       updateStudentsTable();
+      localStorage.setItem("students", JSON.stringify(students));
     };
   });
 }
